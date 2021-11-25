@@ -36,6 +36,11 @@ public class DBConnection {
         }
     }
 
+    public void close() throws SQLException {
+        this.stmt.close();
+        this.con.close();
+    }
+
     public ResultSet executeQuery(String query) {
         App.logger.fine("Running SQL: " + query);
         try {

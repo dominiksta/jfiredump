@@ -1,6 +1,9 @@
 package me.dominiksta.jfiredump;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -79,6 +82,10 @@ public class App {
             "vv", "very-verbose", false, "very verbose logging output for debugging"
         );
         options.addOption(veryVerbose);
+        Option outFile = new Option(
+            "o", "outfile", true, "specify output file (default: out.sql)"
+        );
+        options.addOption(outFile);
 
         CommandLineParser parser = new DefaultParser();
         CommandLine line;
@@ -120,13 +127,40 @@ public class App {
                 }
             }
 
-            new DBConnection(
+            DBConnection con = new DBConnection(
                 line.getOptionValue(host, "localhost"),
                 Integer.parseInt(line.getOptionValue(port, "3050")),
                 line.getArgs()[0],
                 line.getOptionValue(user, "SYSDBA"),
                 line.getOptionValue(password, "masterkey")
             );
+
+            try {
+                String file = line.getOptionValue(outFile, "out.sql");
+                BufferedWriter outFileWriter = new BufferedWriter(new FileWriter(file));
+                App.logger.info("Opened file for output: " + file);
+
+                DBExporter exporter = new DBExporterInsertStatements(con, outFileWriter);
+                exporter.export("LICENSE");
+
+                try {
+                    con.close();    
+                } catch (SQLException e) {
+                    App.logger.severe("Could not close database connection!");
+                    e.printStackTrace();
+                }
+
+                try {
+                    outFileWriter.close();
+                } catch (IOException e) {
+                    App.logger.severe("Could not close outfile!");
+                    e.printStackTrace();
+                }
+
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+
         }
         catch (ParseException exp) {
             System.err.println("Parsing command line failed. Reason: " + exp.getMessage());
