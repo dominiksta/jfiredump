@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
 
 public class DBConnection {
 
@@ -17,7 +16,7 @@ public class DBConnection {
     ) {
         String connectionString = "jdbc:firebirdsql:" + host + "/" + port + ":" + path;
         App.logger.info(
-            "Connecting to " + connectionString + " with " + user + ":" + password
+            "Connecting to " + connectionString + " with user " + user
         );
         try {
             Class.forName("org.firebirdsql.jdbc.FBDriver");
@@ -36,7 +35,7 @@ public class DBConnection {
     }
 
     public ResultSet executeQuery(String query) {
-        App.logger.log(Level.DEBUG, "Running SQL: " + query);
+        App.logger.fine("Running SQL: " + query);
         try {
             return this.stmt.executeQuery(query);
         } catch(SQLException e) {
