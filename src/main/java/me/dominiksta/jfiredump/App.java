@@ -1,39 +1,110 @@
 package me.dominiksta.jfiredump;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 /**
  * Hello world!
  */
 public class App {
+
+    static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+    static final String USAGE_TEXT = "jfiredump [options] [file]\nAvailable options:";
+
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+
+        // ----------------------------------------------------------------------
+        // global logging setup
+        // ----------------------------------------------------------------------
+
+        logger.setLevel(Level.ALL);
+
+        LogManager manager = LogManager.getLogManager();
         try {
-            Class.forName("org.firebirdsql.jdbc.FBDriver");
-        } catch(ClassNotFoundException e) {
-            System.out.println("Could not find Firebird JDBC Driver!");
-            e.printStackTrace();
-        }
-        try {
-            Connection connection = DriverManager.getConnection(
-                "jdbc:firebirdsql:localhost/3055:c:/users/dominik/source/git/enp-online/db/site.gdb",
-                "SYSDBA", "masterkey"
+            manager.readConfiguration(
+                App.class.getClassLoader().getResourceAsStream("logging.properties")
             );
-            Statement stmt = connection.createStatement();
-            try {
-                ResultSet rs = stmt.executeQuery("SELECT * FROM license");
-                rs.next();
-                System.out.println(rs.getObject(2));
-            } finally {
-                stmt.close();
+        } catch (IOException e) {
+            logger.warning(e.getMessage());
+        }
+
+        // ----------------------------------------------------------------------
+        // cli arguments
+        // ----------------------------------------------------------------------
+
+        Options options = new Options();
+        HelpFormatter formatter = new HelpFormatter();
+
+        Option help = new Option(null, "help", false, "print this message");
+        options.addOption(help);
+        Option host = new Option(
+            "h", "host", true, "specify database host (default: localhost)"
+        );
+        options.addOption(host);
+        Option port = new Option(
+            null, "port", true, "specify database port (default: 3050)"
+        );
+        options.addOption(port);
+        Option user = new Option(
+            "u", "user", true, "specify database user (default: SYSDBA)"
+        );
+        options.addOption(user);
+        Option password = new Option(
+            "p", "password", true, "specify database password (default: masterkey)"
+        );
+        options.addOption(password);
+
+        CommandLineParser parser = new DefaultParser();
+        CommandLine line;
+        try {
+            line = parser.parse(options, args);
+
+            // print help and exit
+            if (line.hasOption(help)) {
+                formatter.printHelp(USAGE_TEXT, options);
+                System.exit(0);
             }
-        } catch(SQLException e) {
-            System.out.println("Fatal SQL Error!");
-            e.printStackTrace();
+            // check positional file option
+            if (line.getArgs().length != 1) {
+                System.err.println("Missing positional argument [file]");
+                formatter.printHelp(USAGE_TEXT, options);
+                System.exit(1);
+            }
+
+            // typecheck port option
+            if (line.hasOption(port)) {
+                try {
+                    Integer.parseInt(line.getOptionValue(port));
+                } catch(NumberFormatException e) {
+                    logger.severe("Invalid port: " + line.getOptionValue(port));
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+
+            new DBConnection(
+                line.getOptionValue(host, "localhost"),
+                Integer.parseInt(line.getOptionValue(port, "3050")),
+                line.getArgs()[0],
+                line.getOptionValue(user, "SYSDBA"),
+                line.getOptionValue(password, "masterkey")
+            );
+        }
+        catch (ParseException exp) {
+            System.err.println("Parsing command line failed. Reason: " + exp.getMessage());
+            formatter.printHelp(USAGE_TEXT, options);
+            System.exit(1);
         }
     }
 }
