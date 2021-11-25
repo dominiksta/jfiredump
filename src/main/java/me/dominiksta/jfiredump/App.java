@@ -1,6 +1,8 @@
 package me.dominiksta.jfiredump;
 
 import java.io.IOException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -28,8 +30,6 @@ public class App {
         // global logging setup
         // ----------------------------------------------------------------------
 
-        logger.setLevel(Level.ALL);
-
         LogManager manager = LogManager.getLogManager();
         try {
             manager.readConfiguration(
@@ -38,6 +38,13 @@ public class App {
         } catch (IOException e) {
             logger.warning(e.getMessage());
         }
+
+        Handler handler = new ConsoleHandler();
+
+        logger.setLevel(Level.INFO);
+        handler.setLevel(Level.INFO);
+
+        logger.addHandler(handler);
 
         // ----------------------------------------------------------------------
         // cli arguments
@@ -64,6 +71,14 @@ public class App {
             "p", "password", true, "specify database password (default: masterkey)"
         );
         options.addOption(password);
+        Option verbose = new Option(
+            "v", "verbose", false, "verbose logging output for debugging"
+        );
+        options.addOption(verbose);
+        Option veryVerbose = new Option(
+            "vv", "very-verbose", false, "very verbose logging output for debugging"
+        );
+        options.addOption(veryVerbose);
 
         CommandLineParser parser = new DefaultParser();
         CommandLine line;
@@ -80,6 +95,18 @@ public class App {
                 System.err.println("Missing positional argument [file]");
                 formatter.printHelp(USAGE_TEXT, options);
                 System.exit(1);
+            }
+
+            // set verbose logging
+            if (line.hasOption(verbose)) {
+                logger.setLevel(Level.FINE);
+                handler.setLevel(Level.FINE);
+            }
+
+            // set very verbose logging
+            if (line.hasOption(veryVerbose)) {
+                logger.setLevel(Level.ALL);
+                handler.setLevel(Level.ALL);
             }
 
             // typecheck port option
