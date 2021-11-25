@@ -23,6 +23,7 @@ public class DBConnection {
         } catch(ClassNotFoundException e) {
             System.out.println("Could not find Firebird JDBC Driver!");
             e.printStackTrace();
+            System.exit(1);
         }
         try {
             this.con = DriverManager.getConnection(connectionString, user, password);
@@ -31,6 +32,7 @@ public class DBConnection {
         } catch(SQLException e) {
             App.logger.severe("Fatal SQL Error!");
             e.printStackTrace();
+            System.exit(1);
         }
     }
 
