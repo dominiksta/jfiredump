@@ -25,7 +25,7 @@ public class App {
 
     static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    static final String USAGE_TEXT = "jfiredump [options] [file]\nAvailable options:";
+    static final String USAGE_TEXT = "jfiredump [options] [table] [file]\nAvailable options:";
 
     public static void main(String[] args) {
 
@@ -98,8 +98,10 @@ public class App {
                 System.exit(0);
             }
             // check positional file option
-            if (line.getArgs().length != 1) {
+            if (line.getArgs().length < 2) {
                 System.err.println("Missing positional argument [file]");
+                if (line.getArgs().length < 1)
+                    System.err.println("Missing positional argument [table]");
                 formatter.printHelp(USAGE_TEXT, options);
                 System.exit(1);
             }
@@ -130,7 +132,7 @@ public class App {
             DBConnection con = new DBConnection(
                 line.getOptionValue(host, "localhost"),
                 Integer.parseInt(line.getOptionValue(port, "3050")),
-                line.getArgs()[0],
+                line.getArgs()[1],
                 line.getOptionValue(user, "SYSDBA"),
                 line.getOptionValue(password, "masterkey")
             );
@@ -141,10 +143,10 @@ public class App {
                 App.logger.info("Opened file for output: " + file);
 
                 DBExporter exporter = new DBExporterInsertStatements(con, outFileWriter);
-                exporter.export("LICENSE");
+                exporter.exportTable(line.getArgs()[0]);
 
                 try {
-                    con.close();    
+                    con.close();
                 } catch (SQLException e) {
                     App.logger.severe("Could not close database connection!");
                     e.printStackTrace();
