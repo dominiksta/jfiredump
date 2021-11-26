@@ -1,5 +1,8 @@
 # jfiredump
 
+![License](https://img.shields.io/github/license/dominiksta/jfiredump)
+![jdk-version](https://img.shields.io/badge/jdk--version-1.8-green)
+
 A (very) small utility to dump a Firebird database to a file of SQL INSERT
 statements.
 
