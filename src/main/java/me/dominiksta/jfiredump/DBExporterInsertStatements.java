@@ -2,6 +2,7 @@ package me.dominiksta.jfiredump;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -14,8 +15,24 @@ public class DBExporterInsertStatements extends DBExporter {
     private class TableData
         extends HashMap<String, Tuple<Integer, ArrayList<String>>> {}
 
+    private HashMap<Integer, String> jdbcTypeToString;
+
     public DBExporterInsertStatements(DBConnection con, BufferedWriter outFileWriter) {
         super(con, outFileWriter);
+
+        // prepare jdbc type information for later
+        // ----------------------------------------------------------------------
+        this.jdbcTypeToString = new HashMap<Integer, String>();
+        try {
+            Field[] fields = Types.class.getFields();
+            for (Field field : fields) {
+                this.jdbcTypeToString.put(field.getInt(null), field.getName());
+            }
+        } catch (IllegalAccessException e) {
+            App.logger.severe("Failed getting JDBC type information");
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     private TableData getTableData(String table) {
@@ -47,8 +64,10 @@ public class DBExporterInsertStatements extends DBExporter {
                     );
                     Tuple<Integer, ArrayList<String>> col = tableData.get(column);
 
-                    // TODO: Repeat myself less with the 'Unsupported Types' message
                     switch(col.a) {
+                        // ------------------------------------------------------------
+                        // supported types
+                        // ------------------------------------------------------------
                         case Types.BIT:
                         case Types.TINYINT:
                         case Types.SMALLINT:
@@ -66,95 +85,43 @@ public class DBExporterInsertStatements extends DBExporter {
                         case Types.LONGVARCHAR:
                             col.b.add(value == null ? "NULL" : "'" + value.toString() + "'");
                             break;
-                        case Types.DATE:
-                            App.logger.warning("Unsupported type: DATE");
-                            col.b.add("NULL");
-                            break;
-                        case Types.TIME:
-                            App.logger.warning("Unsupported type: TIME");
-                            col.b.add("NULL");
-                            break;
-                        case Types.TIMESTAMP:
-                            App.logger.warning("Unsupported type: TIMESTAMP");
-                            col.b.add("NULL");
-                            break;
-                        case Types.BINARY:
-                            App.logger.warning("Unsupported type: BINARY");
-                            col.b.add("NULL");
-                            break;
-                        case Types.VARBINARY:
-                            App.logger.warning("Unsupported type: VARBINARY");
-                            col.b.add("NULL");
-                            break;
-                        case Types.LONGVARBINARY:
-                            App.logger.warning("Unsupported type: LONGVARBINARY");
-                            col.b.add("NULL");
-                            break;
                         case Types.NULL:
-                            col.b.add("NULL");
-                            break;
-                        case Types.OTHER:
-                            App.logger.warning("Unsupported type: OTHER");
-                            col.b.add("NULL");
-                            break;
-                        case Types.JAVA_OBJECT:
-                            App.logger.warning("Unsupported type: JAVA_OBJECT");
-                            col.b.add("NULL");
-                            break;
-                        case Types.DISTINCT:
-                            App.logger.warning("Unsupported type: DISTINCT");
-                            col.b.add("NULL");
-                            break;
-                        case Types.ARRAY:
-                            App.logger.warning("Unsupported type: ARRAY");
-                            col.b.add("NULL");
-                            break;
-                        case Types.BLOB:
-                            App.logger.warning("Unsupported type: BLOB");
-                            col.b.add("NULL");
-                            break;
-                        case Types.CLOB:
-                            App.logger.warning("Unsupported type: CLOB");
-                            col.b.add("NULL");
-                            break;
-                        case Types.REF:
-                            App.logger.warning("Unsupported type: REF");
-                            col.b.add("NULL");
-                            break;
-                        case Types.DATALINK:
-                            App.logger.warning("Unsupported type: DATALINK");
                             col.b.add("NULL");
                             break;
                         case Types.BOOLEAN:
                             col.b.add(value == null ? "NULL" : value.toString());
-                            break;
-                        case Types.ROWID:
-                            App.logger.warning("Unsupported type: ROWID");
-                            col.b.add("NULL");
                             break;
                         case Types.NCHAR:
                         case Types.NVARCHAR:
                         case Types.LONGNVARCHAR:
                             col.b.add(value == null ? "NULL" : "'" + value.toString() + "'");
                             break;
+                        // ------------------------------------------------------------
+                        // unsupported types
+                        // ------------------------------------------------------------
+                        case Types.DATE:
+                        case Types.TIME:
+                        case Types.TIMESTAMP:
+                        case Types.BINARY:
+                        case Types.VARBINARY:
+                        case Types.LONGVARBINARY:
+                        case Types.OTHER:
+                        case Types.JAVA_OBJECT:
+                        case Types.DISTINCT:
+                        case Types.ARRAY:
+                        case Types.BLOB:
+                        case Types.CLOB:
+                        case Types.REF:
+                        case Types.DATALINK:
+                        case Types.ROWID:
                         case Types.NCLOB:
-                            App.logger.warning("Unsupported type: NCLOB");
-                            col.b.add("NULL");
-                            break;
                         case Types.SQLXML:
-                            App.logger.warning("Unsupported type: SQLXML");
-                            col.b.add("NULL");
-                            break;
                         case Types.REF_CURSOR:
-                            App.logger.warning("Unsupported type: REF_CURSOR");
-                            col.b.add("NULL");
-                            break;
                         case Types.TIME_WITH_TIMEZONE:
-                            App.logger.warning("Unsupported type: TIME_WITH_TIMEZONE");
-                            col.b.add("NULL");
-                            break;
                         case Types.TIMESTAMP_WITH_TIMEZONE:
-                            App.logger.warning("Unsupported type: TIMESTAMP_WITH_TIMEZONE");
+                            App.logger.warning(
+                                "Unsupported type: " + this.jdbcTypeToString.get(col.a)
+                            );
                             col.b.add("NULL");
                             break;
                         default:
