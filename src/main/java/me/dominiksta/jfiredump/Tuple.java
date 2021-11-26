@@ -1,5 +1,8 @@
 package me.dominiksta.jfiredump;
 
+/**
+ * A simple typed tuple with `a` and `b` values.
+ */
 public class Tuple<A, B> { 
     public final A a; 
     public final B b; 

@@ -20,21 +20,20 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-/**
- * Hello world!
- */
+/** This class is the main entrypoint for jfiredump */
 public class App {
 
-    static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    public static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static Handler loggingHandler;
 
+    /** 
+     * This will be displayed when the cli arguments are invalid or --help is
+     * provided
+     */
     static final String USAGE_TEXT = "jfiredump [options] [table] [file]\nAvailable options:";
 
-    public static void main(String[] args) {
-
-        // ----------------------------------------------------------------------
-        // global logging setup
-        // ----------------------------------------------------------------------
-
+    /** Global logging setup */
+    public static void initLoggin() {
         LogManager manager = LogManager.getLogManager();
         try {
             manager.readConfiguration(
@@ -44,12 +43,20 @@ public class App {
             logger.warning(e.getMessage());
         }
 
-        Handler handler = new ConsoleHandler();
+        loggingHandler = new ConsoleHandler();
 
         logger.setLevel(Level.INFO);
-        handler.setLevel(Level.INFO);
+        loggingHandler.setLevel(Level.INFO);
 
-        logger.addHandler(handler);
+        logger.addHandler(loggingHandler);
+    }
+
+    /**
+     * Parse cli arguments and start exporter based on cli arguments.
+     */
+    public static void main(String[] args) {
+
+        App.initLoggin();
 
         // ----------------------------------------------------------------------
         // cli arguments
@@ -111,13 +118,13 @@ public class App {
             // set verbose logging
             if (line.hasOption(verbose)) {
                 logger.setLevel(Level.FINE);
-                handler.setLevel(Level.FINE);
+                loggingHandler.setLevel(Level.FINE);
             }
 
             // set very verbose logging
             if (line.hasOption(veryVerbose)) {
                 logger.setLevel(Level.ALL);
-                handler.setLevel(Level.ALL);
+                loggingHandler.setLevel(Level.ALL);
             }
 
             // typecheck port option
@@ -130,6 +137,10 @@ public class App {
                     System.exit(1);
                 }
             }
+
+            // ----------------------------------------------------------------------
+            // start exporter based on cli arguments
+            // ----------------------------------------------------------------------
 
             DBConnection con = new DBConnection(
                 line.getOptionValue(host, "localhost"),

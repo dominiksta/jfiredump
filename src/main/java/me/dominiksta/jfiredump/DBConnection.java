@@ -6,11 +6,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * A wrapper for some JDBC functionality to make connecting to the firebird
+ * database a little bit easier for me.
+ */
 public class DBConnection {
 
     private Connection con;
     private Statement stmt;
 
+    /** Connect to a firebird database as specified by the arguments */
     public DBConnection(
         String host, int port, String path, String user, String password
     ) {
@@ -53,11 +58,13 @@ public class DBConnection {
         }
     }
 
+    /** Close the database connection */
     public void close() throws SQLException {
         this.stmt.close();
         this.con.close();
     }
 
+    /** Run a `query` and return a `ResultSet` */
     public ResultSet executeQuery(String query) {
         App.logger.fine("Running SQL: " + query);
         try {

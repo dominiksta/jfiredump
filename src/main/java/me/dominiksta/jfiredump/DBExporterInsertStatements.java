@@ -13,11 +13,19 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+/**
+ * An implementation of `DBExporter` that exports to files consisting of a series
+ * of SQL INSERT statements.
+ */
 public class DBExporterInsertStatements extends DBExporter {
 
+    /** Hold the data retrieved from the database in `getQueryData` */
     private class TableData
         extends HashMap<String, Tuple<Integer, ArrayList<String>>> {}
 
+    /** Contains a mapping of JDBC types as integers to strings */
     private HashMap<Integer, String> jdbcTypeToString;
 
     public DBExporterInsertStatements(DBConnection con, BufferedWriter outFileWriter) {
@@ -38,6 +46,10 @@ public class DBExporterInsertStatements extends DBExporter {
         }
     }
 
+    /**
+     * Return the data for a given `query`. All fields are converted to Strings
+     * that can be used to assemble INSERT statements.
+     */
     private TableData getQueryData(String query) {
         if (!query.substring(0, 6).equalsIgnoreCase("select"))
             throw new IllegalArgumentException("Query does not start with `select`");
@@ -194,6 +206,11 @@ public class DBExporterInsertStatements extends DBExporter {
         }
     }
 
+    /**
+     * Run an arbitrary sql query and export it. The export will insert into the
+     * table given by `targetTable`. Exports to `outFile` as a series of SQL
+     * INSERT statements.
+     */
     @Override
     public void exportQuery(String query, String targetTable) {
         if (targetTable.length() == 0)
@@ -231,13 +248,21 @@ public class DBExporterInsertStatements extends DBExporter {
         }
     }
 
+    /**
+     * Export a table by name. Exports to `outFile` as a series of SQL INSERT
+     * statements.
+     */
     @Override
     public void exportTable(String table) {
         this.exportQuery("SELECT * FROM " + table, table);
     }
 
+    /**
+     * Export all tables. Exports to `outFile` as a series of SQL INSERT
+     * statements.
+     */
     @Override
     public void exportAll() {
-        // TODO: Implement
+        throw new NotImplementedException();
     }
 }
