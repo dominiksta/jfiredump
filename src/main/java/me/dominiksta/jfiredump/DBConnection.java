@@ -18,6 +18,8 @@ public class DBConnection {
         App.logger.info(
             "Connecting to " + connectionString + " with user " + user
         );
+        // load firebird driver
+        // ----------------------------------------------------------------------
         try {
             Class.forName("org.firebirdsql.jdbc.FBDriver");
         } catch(ClassNotFoundException e) {
@@ -26,9 +28,24 @@ public class DBConnection {
             System.exit(1);
         }
         try {
+            // connect to server
+            // ----------------------------------------------------------------------
             this.con = DriverManager.getConnection(connectionString, user, password);
             App.logger.info("Connection successful");
             this.stmt = this.con.createStatement();
+
+            // detect version
+            // ----------------------------------------------------------------------
+            ResultSet rs = this.executeQuery(
+                "SELECT rdb$get_context('SYSTEM', 'ENGINE_VERSION') from rdb$database;"
+            );
+            rs.next();
+            String version = rs.getString(1);
+            App.logger.info("Detected firebird version: " + version);
+            if (!version.startsWith("2")) {
+                App.logger.warning("Only firebird major version 2 is currently supported!");
+                App.logger.warning("Execution will continue, but things may break!");
+            }
         } catch(SQLException e) {
             App.logger.severe("Fatal SQL Error!");
             e.printStackTrace();
