@@ -143,7 +143,7 @@ public class DBExporterInsertStatements extends DBExporter {
                                 c.get(Calendar.MINUTE), c.get(Calendar.SECOND),
                                 c.get(Calendar.MILLISECOND)
                             );
-;
+
                             if (col.a == Types.DATE) {
                                 col.b.add("'" + date + "'");
                             } else if (col.a == Types.TIME) {
