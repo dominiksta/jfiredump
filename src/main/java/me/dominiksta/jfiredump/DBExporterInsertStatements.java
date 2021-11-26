@@ -35,8 +35,11 @@ public class DBExporterInsertStatements extends DBExporter {
         }
     }
 
-    private TableData getTableData(String table) {
-        ResultSet rs = this.con.executeQuery("SELECT * FROM " + table);
+    private TableData getQueryData(String query) {
+        if (!query.substring(0, 6).equalsIgnoreCase("select"))
+            throw new IllegalArgumentException("Query does not start with `select`");
+
+        ResultSet rs = this.con.executeQuery(query);
         try {
             TableData tableData = new TableData();
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -51,7 +54,7 @@ public class DBExporterInsertStatements extends DBExporter {
             App.logger.fine("Got column labels: " + tableData.keySet());
 
             if (!rs.isBeforeFirst()) {
-                App.logger.info("No data in specified table " + table);
+                App.logger.info("No data returned by specified query: " + query);
                 return tableData;
             }
 
@@ -139,8 +142,12 @@ public class DBExporterInsertStatements extends DBExporter {
         }
     }
 
-    void export(String table) {
-        TableData tableData = this.getTableData(table);
+    @Override
+    void exportQuery(String query, String targetTable) {
+        if (targetTable.length() == 0)
+            throw new IllegalArgumentException("Table name may not be empty");
+
+        TableData tableData = this.getQueryData(query);
         // they have to be all the same length, so we can just take the length
         // of the first one
         int length = tableData.get(tableData.keySet().iterator().next()).b.size();
@@ -157,7 +164,7 @@ public class DBExporterInsertStatements extends DBExporter {
                 }
                 values = values.substring(0, values.length() - 1);
                 this.outFileWriter.write(
-                    "INSERT INTO " + table + " (" + columns + ") VALUES ("
+                    "INSERT INTO " + targetTable + " (" + columns + ") VALUES ("
                     + values + ");\n"
                 );
             } catch(IOException e) {
@@ -168,6 +175,12 @@ public class DBExporterInsertStatements extends DBExporter {
         }
     }
 
+    @Override
+    void exportTable(String table) {
+        this.exportQuery("SELECT * FROM " + table, table);
+    }
+
+    @Override
     void exportAll() {
         // TODO: Implement
     }

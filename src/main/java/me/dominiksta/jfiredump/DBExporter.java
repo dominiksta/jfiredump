@@ -12,6 +12,7 @@ public abstract class DBExporter {
         this.outFileWriter = outFileWriter;
     }
 
-    abstract void export(String table);
+    abstract void exportQuery(String query, String targetTable);
+    abstract void exportTable(String table);
     abstract void exportAll();
 }
