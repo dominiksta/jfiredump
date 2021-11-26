@@ -44,7 +44,7 @@ public class DBExporterInsertStatements extends DBExporter {
             TableData tableData = new TableData();
             ResultSetMetaData rsmd = rs.getMetaData();
 
-            for (int i = 1; i < rsmd.getColumnCount(); i++)
+            for (int i = 1; i <= rsmd.getColumnCount(); i++)
                 tableData.put(rsmd.getColumnLabel(i),
                     new Tuple<Integer, ArrayList<String>>(
                         rsmd.getColumnType(i),
