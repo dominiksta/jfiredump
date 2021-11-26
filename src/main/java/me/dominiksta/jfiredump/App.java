@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -83,7 +85,7 @@ public class App {
         );
         options.addOption(veryVerbose);
         Option outFile = new Option(
-            "o", "outfile", true, "specify output file (default: out.sql)"
+            "o", "outfile", true, "specify output file (default: <datetime><table>.sql)"
         );
         options.addOption(outFile);
 
@@ -138,7 +140,11 @@ public class App {
             );
 
             try {
-                String file = line.getOptionValue(outFile, "out.sql");
+                String file = line.getOptionValue(outFile, String.format("%s %s.sql",
+                        new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()),
+                        line.getArgs()[0]
+                    )
+                );
                 BufferedWriter outFileWriter = new BufferedWriter(new FileWriter(file));
                 App.logger.info("Opened file for output: " + file);
 
