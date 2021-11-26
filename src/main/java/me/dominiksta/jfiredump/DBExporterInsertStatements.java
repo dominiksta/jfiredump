@@ -143,7 +143,7 @@ public class DBExporterInsertStatements extends DBExporter {
     }
 
     @Override
-    void exportQuery(String query, String targetTable) {
+    public void exportQuery(String query, String targetTable) {
         if (targetTable.length() == 0)
             throw new IllegalArgumentException("Table name may not be empty");
 
@@ -176,12 +176,12 @@ public class DBExporterInsertStatements extends DBExporter {
     }
 
     @Override
-    void exportTable(String table) {
+    public void exportTable(String table) {
         this.exportQuery("SELECT * FROM " + table, table);
     }
 
     @Override
-    void exportAll() {
+    public void exportAll() {
         // TODO: Implement
     }
 }
