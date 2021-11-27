@@ -1,6 +1,7 @@
 package me.dominiksta.jfiredump;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -69,6 +70,24 @@ public class DBConnection {
         App.logger.fine("Running SQL: " + query);
         try {
             return this.stmt.executeQuery(query);
+        } catch(SQLException e) {
+            App.logger.severe("Fatal SQL Error!");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /** List all (non-system) tables in the database. */
+    public ResultSet listTables(){
+        // One could use a firebird specific query to retrieve all table
+        // names. If I however should want to at some point in the future for
+        // some reason extend this tool for other databases, then this way of
+        // doing it with JDBC would still work.
+        try {
+            DatabaseMetaData md = this.con.getMetaData();
+            // If the last parameter is set to null, all tables including system
+            // tables and views will be listed.
+            return md.getTables(null, null, "%", new String[]{"TABLE"});
         } catch(SQLException e) {
             App.logger.severe("Fatal SQL Error!");
             e.printStackTrace();

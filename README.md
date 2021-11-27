@@ -32,7 +32,7 @@ Jfiredump was built for **firebird version 2.x**. Major version 3 and up is not
 supported and neither is major version 1. It *could* work with these versions,
 but you should probably expect some incompatibilities.
 
-It should correctly handle all common types except blob types (although `BLOB
+It should correctly handle all common types *except blob types* (although `BLOB
 SUB_TYPE TEXT` will be treated as a normal string). Warnings will be displayed
 when an unsupported type is encountered.
 
@@ -44,17 +44,18 @@ arguments should be mostly self-explanatory and can be shown by running
 
 ```
 $ java -jar jfiredump-VERSION.jar --help
-usage: jfiredump [options] [table] [file]
+usage: jfiredump [OPTIONS] [TABLE|!!all!!] [FILE]
 Available options:
- -h,--host <arg>       specify database host (default: localhost)
-    --help             print this message
- -o,--outfile <arg>    specify output file (default:
-                       <datetime><table>.sql)
- -p,--password <arg>   specify database password (default: masterkey)
-    --port <arg>       specify database port (default: 3050)
- -u,--user <arg>       specify database user (default: SYSDBA)
- -v,--verbose          verbose logging output for debugging
- -vv,--very-verbose    very verbose logging output for debugging
+ -h,--host <arg>           specify database host (default: localhost)
+    --help                 print this message
+ -o,--out-location <arg>   specify output location (default for
+                           singletables: <datetime><table>.sql, default
+                           for all tables: ./out)
+ -p,--password <arg>       specify database password (default: masterkey)
+    --port <arg>           specify database port (default: 3050)
+ -u,--user <arg>           specify database user (default: SYSDBA)
+ -v,--verbose              verbose logging output for debugging
+ -vv,--very-verbose        very verbose logging output for debugging
 ```
 
 # Development

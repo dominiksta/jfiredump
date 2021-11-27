@@ -1,11 +1,7 @@
 package me.dominiksta.jfiredump;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -26,11 +22,12 @@ public class App {
     public static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private static Handler loggingHandler;
 
-    /** 
+    /**
      * This will be displayed when the cli arguments are invalid or --help is
      * provided
      */
-    static final String USAGE_TEXT = "jfiredump [options] [table] [file]\nAvailable options:";
+    static final String USAGE_TEXT = "jfiredump [OPTIONS] [TABLE|!!all!!] [FILE]" +
+        "\nAvailable options:";
 
     /** Global logging setup */
     public static void initLoggin() {
@@ -91,10 +88,11 @@ public class App {
             "vv", "very-verbose", false, "very verbose logging output for debugging"
         );
         options.addOption(veryVerbose);
-        Option outFile = new Option(
-            "o", "outfile", true, "specify output file (default: <datetime><table>.sql)"
+        Option outLocation = new Option(
+            "o", "out-location", true, "specify output location (default for single" +
+            "tables: <datetime><table>.sql, default for all tables: ./out)"
         );
-        options.addOption(outFile);
+        options.addOption(outLocation);
 
         CommandLineParser parser = new DefaultParser();
         CommandLine line;
@@ -150,36 +148,22 @@ public class App {
                 line.getOptionValue(password, "masterkey")
             );
 
-            try {
-                String file = line.getOptionValue(outFile, String.format("%s %s.sql",
-                        new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()),
-                        line.getArgs()[0]
-                    )
+            DBExporterInsertStatements exporter = new DBExporterInsertStatements(con);
+            if (line.getArgs()[0].equals("!!all!!")) {
+                exporter.exportAllTables(line.getOptionValue(outLocation));
+            } else {
+                exporter.exportTable(
+                    line.getArgs()[0], line.getOptionValue(outLocation)
                 );
-                BufferedWriter outFileWriter = new BufferedWriter(new FileWriter(file));
-                App.logger.info("Opened file for output: " + file);
-
-                DBExporter exporter = new DBExporterInsertStatements(con, outFileWriter);
-                exporter.exportTable(line.getArgs()[0]);
-
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                    App.logger.severe("Could not close database connection!");
-                    e.printStackTrace();
-                }
-
-                try {
-                    outFileWriter.close();
-                } catch (IOException e) {
-                    App.logger.severe("Could not close outfile!");
-                    e.printStackTrace();
-                }
-
-            } catch(IOException e) {
-                e.printStackTrace();
             }
 
+
+            try {
+                con.close();
+            } catch (SQLException e) {
+                App.logger.severe("Could not close database connection!");
+                e.printStackTrace();
+            }
         }
         catch (ParseException exp) {
             System.err.println("Parsing command line failed. Reason: " + exp.getMessage());

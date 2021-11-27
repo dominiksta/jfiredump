@@ -1,6 +1,10 @@
 package me.dominiksta.jfiredump;
 
 import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * The abstract class representing an 'exporter'. An 'exporter' can take some
@@ -11,21 +15,38 @@ public abstract class DBExporter {
 
     /** A connection to the database to export from */
     protected DBConnection con;
-    /** This file should be written to for exports */
-    protected BufferedWriter outFileWriter;
 
-    public DBExporter(DBConnection con, BufferedWriter outFileWriter) {
+    public DBExporter(DBConnection con) {
         this.con = con;
-        this.outFileWriter = outFileWriter;
     }
 
     /**
-     * Run an arbitrary sql query and export it. The export will insert into the
-     * table given by `targetTable`.
+     * Run an arbitrary sql query and export it to `fileName`. The export will
+     * insert into the table given by `targetTable`.
      */
-    public abstract void exportQuery(String query, String targetTable);
-    /** Export a table by name */
-    public abstract void exportTable(String table);
-    /** Export all tables */
-    public abstract void exportAll();
+    public abstract void exportQuery(String query, String targetTable, String fileName);
+    /** Export a table by name to `fileName` */
+    public abstract void exportTable(String table, String fileName);
+    /** Export all tables to `directoryName` */
+    public abstract void exportAllTables(String directoryName);
+
+    /** Helper to return an open BufferedWriter for `fileName` */
+    protected BufferedWriter writerForPath(String fileName) {
+        try {
+            return new BufferedWriter(new FileWriter(fileName));
+        } catch(IOException e) {
+            App.logger.severe("Could not open file with path " + fileName);
+            e.printStackTrace();
+            System.exit(1);
+            return null;
+        }
+    }
+
+    /** Return a default filename for exporting `table` */
+    protected static String defaultFileName(String tableName) {
+        return String.format("%s %s.sql",
+            new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()),
+            tableName
+        );
+    }
 }
