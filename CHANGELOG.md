@@ -1,6 +1,15 @@
 Changelog
 ======================================================================
 
+`0.0.3` - _unreleased_
+----------------------------------------------------------------------
+
+### Changed
+
+- The user will no longer be spammed with warnings for every single item of an
+  unsupported type. Instead, warnings for an unsupported type will only be
+  displayed once per table.
+
 `0.0.2` - _2021-11-27_
 ----------------------------------------------------------------------
 

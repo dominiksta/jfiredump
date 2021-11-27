@@ -73,6 +73,9 @@ public class DBExporterInsertStatements extends DBExporter {
                 return tableData;
             }
 
+            // only warn once per type, don't spam the user
+            ArrayList<Integer> typesAlreadWarned = new ArrayList<Integer>();
+
             while(rs.next()) {
                 for(String column : tableData.keySet()) {
                     Object value = rs.getObject(column);
@@ -175,9 +178,12 @@ public class DBExporterInsertStatements extends DBExporter {
                         case Types.BLOB:
                         case Types.CLOB:
                         case Types.OTHER:
-                            App.logger.warning(
-                                "Unsupported type: " + this.jdbcTypeToString.get(col.a)
-                            );
+                            if (typesAlreadWarned.indexOf(col.a) == -1) {
+                                App.logger.warning(
+                                    "Unsupported type: " + this.jdbcTypeToString.get(col.a)
+                                );
+                                typesAlreadWarned.add(col.a);
+                            }
                             col.b.add("'[BINARY_DATA_LOST_IN_EXPORT]'");
                             break;
                         case Types.JAVA_OBJECT:
@@ -191,9 +197,12 @@ public class DBExporterInsertStatements extends DBExporter {
                         case Types.REF_CURSOR:
                         case Types.TIME_WITH_TIMEZONE:
                         case Types.TIMESTAMP_WITH_TIMEZONE:
-                            App.logger.warning(
-                                "Unsupported type: " + this.jdbcTypeToString.get(col.a)
-                            );
+                            if (typesAlreadWarned.indexOf(col.a) == -1) {
+                                App.logger.warning(
+                                    "Unsupported type: " + this.jdbcTypeToString.get(col.a)
+                                );
+                                typesAlreadWarned.add(col.a);
+                            }
                             col.b.add("NULL");
                             break;
                         default:
