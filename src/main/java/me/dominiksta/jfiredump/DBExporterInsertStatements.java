@@ -172,12 +172,17 @@ public class DBExporterInsertStatements extends DBExporter {
                         case Types.BINARY:
                         case Types.VARBINARY:
                         case Types.LONGVARBINARY:
+                        case Types.BLOB:
+                        case Types.CLOB:
                         case Types.OTHER:
+                            App.logger.warning(
+                                "Unsupported type: " + this.jdbcTypeToString.get(col.a)
+                            );
+                            col.b.add("'[BINARY_DATA_LOST_IN_EXPORT]'");
+                            break;
                         case Types.JAVA_OBJECT:
                         case Types.DISTINCT:
                         case Types.ARRAY:
-                        case Types.BLOB:
-                        case Types.CLOB:
                         case Types.REF:
                         case Types.DATALINK:
                         case Types.ROWID:

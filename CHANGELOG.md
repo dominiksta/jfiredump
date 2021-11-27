@@ -15,6 +15,9 @@ Changelog
 - `--outfile` was renamed to `--out-location` and covers both the output
   directory when exporting an entire database as well as the file name when
   exporting a single table
+- Unsupported binary types will now be exported to the string
+  `'[BINARY_DATA_LOST_IN_EXPORT]'`, mimicking the behaviour of Flamerobin (but
+  with clearer wording imo).
 
 `0.0.1` - _2021-11-26_
 ----------------------------------------------------------------------
