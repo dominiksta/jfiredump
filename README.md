@@ -8,17 +8,26 @@ statements.
 
 ## Alternatives
 
-### `fbexport`
+### FBExport
 
 [fbexport](http://www.firebirdfaq.org/fbexport.php) does not handle `BLOB
 SUB_TYPE TEXT` as strings because it treats them as generic blobs, setting their
 value to `NULL` in the export.
 
-### `dbeaver`
+### DBeaver
 
-[dbeaver](http://www.firebirdfaq.org/fbexport.php) provides a competent exporter
+[DBeaver](https://dbeaver.io/) provides a competent exporter
 with *way* more options then this tool. It is however part of a rather large IDE
 and not really *scriptable* (outside of GUI automation - have fun with that).
+
+### Flamerobin
+
+[Flamerobin](http://www.flamerobin.org/) also allows exporting a database to
+INSERT statements (or other formats like csv) by running a `SELECT` query and
+then first selecting "Fetch all records" in the right-click menu, then selecting
+all records with Control-A and finally selecting "Copy as INSERT
+statements". This has the same problem as the exporter from DBeaver: it is not
+scriptable and therefore requires quite a bit of manual labor to use.
 
 ### Other Alternatives?
 
