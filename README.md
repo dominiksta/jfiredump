@@ -67,6 +67,20 @@ Available options:
  -vv,--very-verbose        very verbose logging output for debugging
 ```
 
+## Examples
+
+### Exporting all tables in a database
+
+```
+$ java -jar jfiredump-VERSION.jar -p myPassword --port 3055 !!all!! MY_DB.GDB
+```
+
+### Exporting one table in a database
+
+```
+$ java -jar jfiredump-VERSION.jar --out-location table.sql MY_TABLE MY_DB.GDB
+```
+
 # Development
 
 ## Building
