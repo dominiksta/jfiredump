@@ -19,6 +19,10 @@ Changelog
   not in any other tool I tried (Flamerobin and DBeaver). The disclaimer in the
   comment should be enough to alert users to the correct usage imo.
 
+### Fixed
+
+- Typo 'singletables' -> 'single tables' in CLI help
+
 `0.0.2` - _2021-11-27_
 ----------------------------------------------------------------------
 

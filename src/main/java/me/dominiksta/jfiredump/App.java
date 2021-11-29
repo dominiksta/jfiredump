@@ -91,7 +91,7 @@ public class App {
         options.addOption(veryVerbose);
         Option outLocation = new Option(
             "o", "out-location", true, "specify output location (default for single" +
-            "tables: <datetime><table>.sql, default for all tables: ./out)"
+            " tables: <datetime><table>.sql, default for all tables: ./out)"
         );
         options.addOption(outLocation);
         Option encoding = new Option(
