@@ -26,7 +26,7 @@ public class App {
      * This will be displayed when the cli arguments are invalid or --help is
      * provided
      */
-    static final String USAGE_TEXT = "jfiredump [OPTIONS] [TABLE|!!all!!] [FILE]" +
+    static final String USAGE_TEXT = "jfiredump [<OPTIONS>] {<TABLE>|!!all!!} <FILE>" +
         "\nAvailable options:";
 
     /** Global logging setup */
@@ -61,6 +61,7 @@ public class App {
 
         Options options = new Options();
         HelpFormatter formatter = new HelpFormatter();
+        formatter.setWidth(100);
 
         Option help = new Option(null, "help", false, "print this message");
         options.addOption(help);
