@@ -53,26 +53,29 @@ arguments should be mostly self-explanatory and can be shown by running
 
 ```
 $ java -jar jfiredump-VERSION.jar --help
-usage: jfiredump [OPTIONS] [TABLE|!!all!!] [FILE]
+usage: jfiredump [<OPTIONS>] {<TABLE>|!!all!!} <FILE>
 Available options:
+ -e,--encoding <arg>       specify database encoding (firebird encoding names, see
+                           https://github.com/FirebirdSQL/jaybird/wiki/Character-encodings)
  -h,--host <arg>           specify database host (default: localhost)
     --help                 print this message
- -o,--out-location <arg>   specify output location (default for
-                           singletables: <datetime><table>.sql, default
-                           for all tables: ./out)
+ -l,--line-endings <arg>   either LF or CRLF
+ -o,--out-location <arg>   specify output location (default for single tables:
+                           <datetime><table>.sql, default for all tables: ./out)
  -p,--password <arg>       specify database password (default: masterkey)
     --port <arg>           specify database port (default: 3050)
  -u,--user <arg>           specify database user (default: SYSDBA)
  -v,--verbose              verbose logging output for debugging
  -vv,--very-verbose        very verbose logging output for debugging
-```
+ ```
 
 ## Examples
 
 ### Exporting all tables in a database
 
 ```
-$ java -jar jfiredump-VERSION.jar -p myPassword --port 3055 !!all!! MY_DB.GDB
+$ java -jar jfiredump-VERSION.jar --line-endings CRLF --encoding WIN1252 \
+  -p myPassword --port 3055 !!all!! MY_DB.GDB
 ```
 
 ### Exporting one table in a database
