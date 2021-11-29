@@ -104,7 +104,8 @@ public class DBExporterInsertStatements extends DBExporter {
                         case Types.CHAR:
                         case Types.VARCHAR:
                         case Types.LONGVARCHAR:
-                            col.b.add(value == null ? "NULL" : "'" + value.toString() + "'");
+                            col.b.add(value == null ? "NULL" : "'" +
+                                value.toString().replaceAll("'", "''") + "'");
                             break;
                         case Types.NULL:
                             col.b.add("NULL");
@@ -115,7 +116,8 @@ public class DBExporterInsertStatements extends DBExporter {
                         case Types.NCHAR:
                         case Types.NVARCHAR:
                         case Types.LONGNVARCHAR:
-                            col.b.add(value == null ? "NULL" : "'" + value.toString() + "'");
+                            col.b.add(value == null ? "NULL" : "'" +
+                                value.toString().replaceAll("'", "''") + "'");
                             break;
                         case Types.DATE:
                         case Types.TIME:

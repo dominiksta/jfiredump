@@ -21,6 +21,7 @@ Changelog
 
 ### Fixed
 
+- Escape single quotes in strings as double quotes (`'` -> `''`)
 - Typo 'singletables' -> 'single tables' in CLI help
 
 `0.0.2` - _2021-11-27_
