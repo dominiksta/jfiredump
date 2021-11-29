@@ -16,6 +16,7 @@ public class DBConnection {
 
     private Connection con;
     private Statement stmt;
+    private Properties props;
 
     /** Connect to a firebird database as specified by the arguments */
     public DBConnection(
@@ -38,7 +39,7 @@ public class DBConnection {
         try {
             // connect to server
             // ----------------------------------------------------------------------
-            Properties props = new Properties();
+            props = new Properties();
             props.setProperty("user", user);
             props.setProperty("password", password);
             // see https://github.com/FirebirdSQL/jaybird/wiki/Character-encodings
@@ -101,5 +102,11 @@ public class DBConnection {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /** Get the set Firebird encoding */
+    public String getEncoding() {
+        return this.props.getProperty("encoding") == null ?
+            "NONE" : this.props.getProperty("encoding");
     }
 }

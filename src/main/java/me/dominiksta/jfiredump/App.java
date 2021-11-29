@@ -27,7 +27,7 @@ public class App {
      * provided
      */
     static final String USAGE_TEXT = "jfiredump [<OPTIONS>] {<TABLE>|!!all!!} <FILE>" +
-        "\nAvailable options:";
+        System.lineSeparator() + "Available options:";
 
     /** Global logging setup */
     public static void initLoggin() {
@@ -99,6 +99,8 @@ public class App {
             " names, see https://github.com/FirebirdSQL/jaybird/wiki/Character-encodings)"
         );
         options.addOption(encoding);
+        Option lineEndings = new Option("l", "line-endings", true, "either LF or CRLF");
+        options.addOption(lineEndings);
 
         CommandLineParser parser = new DefaultParser();
         CommandLine line;
@@ -156,6 +158,22 @@ public class App {
             );
 
             DBExporterInsertStatements exporter = new DBExporterInsertStatements(con);
+            switch(line.getOptionValue(lineEndings, "auto")) {
+                case "LF":
+                    exporter.setNewline("\n");
+                    break;
+                case "CRLF":
+                    exporter.setNewline("\r\n");
+                    break;
+                case "auto":
+                    // leave default
+                    break;
+                default:
+                    String msg = "Invalid specified line endings: " +
+                        line.getOptionValue(lineEndings);
+                    App.logger.severe(msg);
+                    throw new RuntimeException(msg);
+            }
             if (line.getArgs()[0].equals("!!all!!")) {
                 exporter.exportAllTables(line.getOptionValue(outLocation));
             } else {

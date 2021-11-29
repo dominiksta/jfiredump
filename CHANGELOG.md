@@ -8,6 +8,10 @@ Changelog
 
 - Allow setting database encoding explicitly with the `-e` or `--encoding`
   option.
+- Allow setting export line endings with the `-l` or `--line-endings` option to
+  LF or CRLF. When specifying an encoding with `--encoding` that starts with
+  either "WIN" or "DOS", CRLF line endings are used by default. This way,
+  newlines in exported strings should be handled properly.
 
 ### Changed
 
