@@ -14,6 +14,10 @@ Changelog
 - The user will no longer be spammed with warnings for every single item of an
   unsupported type. Instead, warnings for an unsupported type will only be
   displayed once per table.
+- The `SET SQL DIALECT 3;` statement at the top of every file is not commented
+  out. This is because this specific command seems to only work in `isql` and
+  not in any other tool I tried (Flamerobin and DBeaver). The disclaimer in the
+  comment should be enough to alert users to the correct usage imo.
 
 `0.0.2` - _2021-11-27_
 ----------------------------------------------------------------------
