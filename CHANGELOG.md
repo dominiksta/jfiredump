@@ -4,6 +4,11 @@ Changelog
 `0.0.3` - _unreleased_
 ----------------------------------------------------------------------
 
+### Added
+
+- Allow setting database encoding explicitly with the `-e` or `--encoding`
+  option.
+
 ### Changed
 
 - The user will no longer be spammed with warnings for every single item of an

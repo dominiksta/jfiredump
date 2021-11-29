@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 
 /**
  * A wrapper for some JDBC functionality to make connecting to the firebird
@@ -18,7 +19,8 @@ public class DBConnection {
 
     /** Connect to a firebird database as specified by the arguments */
     public DBConnection(
-        String host, int port, String path, String user, String password
+        String host, int port, String path, String user, String password,
+        String encoding
     ) {
         String connectionString = "jdbc:firebirdsql:" + host + "/" + port + ":" + path;
         App.logger.info(
@@ -36,7 +38,13 @@ public class DBConnection {
         try {
             // connect to server
             // ----------------------------------------------------------------------
-            this.con = DriverManager.getConnection(connectionString, user, password);
+            Properties props = new Properties();
+            props.setProperty("user", user);
+            props.setProperty("password", password);
+            // see https://github.com/FirebirdSQL/jaybird/wiki/Character-encodings
+            if (encoding != null) props.setProperty("encoding", encoding);
+
+            this.con = DriverManager.getConnection(connectionString, props);
             App.logger.info("Connection successful");
             this.stmt = this.con.createStatement();
 

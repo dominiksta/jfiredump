@@ -93,6 +93,11 @@ public class App {
             "tables: <datetime><table>.sql, default for all tables: ./out)"
         );
         options.addOption(outLocation);
+        Option encoding = new Option(
+            "e", "encoding", true, "specify database encoding (firebird encoding" +
+            " names, see https://github.com/FirebirdSQL/jaybird/wiki/Character-encodings)"
+        );
+        options.addOption(encoding);
 
         CommandLineParser parser = new DefaultParser();
         CommandLine line;
@@ -145,7 +150,8 @@ public class App {
                 Integer.parseInt(line.getOptionValue(port, "3050")),
                 line.getArgs()[1],
                 line.getOptionValue(user, "SYSDBA"),
-                line.getOptionValue(password, "masterkey")
+                line.getOptionValue(password, "masterkey"),
+                line.getOptionValue(encoding)
             );
 
             DBExporterInsertStatements exporter = new DBExporterInsertStatements(con);
