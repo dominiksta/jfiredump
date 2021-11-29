@@ -7,7 +7,7 @@
     <groupId>me.dominiksta.jfiredump</groupId>
     <artifactId>jfiredump</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 
     <name>jfiredump</name>
     <url>https://github.com/dominiksta/jfiredump</url>
