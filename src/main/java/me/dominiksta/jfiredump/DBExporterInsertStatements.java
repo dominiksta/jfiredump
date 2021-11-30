@@ -297,7 +297,7 @@ public class DBExporterInsertStatements extends DBExporter {
      * Export all tables. Exports to files in `directoryName` (individual
      * fileNames are generated from `DBExporter.defaultFileName`) as a series of
      * SQL INSERT statements. If `directoryName` is `null`, the default
-     * directory './out' is used.
+     * directory `DBExporter.defaultFolderName()` is used.
      */
     @Override
     public void exportAllTables(String directoryName) {

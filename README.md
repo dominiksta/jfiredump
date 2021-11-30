@@ -56,18 +56,20 @@ $ java -jar jfiredump-VERSION.jar --help
 usage: jfiredump [<OPTIONS>] {<TABLE>|!!all!!} <FILE>
 Available options:
  -e,--encoding <arg>       specify database encoding (firebird encoding names, see
-                           https://github.com/FirebirdSQL/jaybird/wiki/Character-encodings)
+                           https://github.com/FirebirdSQL/jaybird/wiki/Character-encodings
+                           )
  -h,--host <arg>           specify database host (default: localhost)
     --help                 print this message
  -l,--line-endings <arg>   either LF or CRLF
  -o,--out-location <arg>   specify output location (default for single tables:
-                           <datetime><table>.sql, default for all tables: ./out)
+                           '<datetime><table>.sql', default for all tables: '<datetime>
+                           jfiredump')
  -p,--password <arg>       specify database password (default: masterkey)
     --port <arg>           specify database port (default: 3050)
  -u,--user <arg>           specify database user (default: SYSDBA)
  -v,--verbose              verbose logging output for debugging
  -vv,--very-verbose        very verbose logging output for debugging
- ```
+```
 
 ## Examples
 

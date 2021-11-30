@@ -61,7 +61,7 @@ public class App {
 
         Options options = new Options();
         HelpFormatter formatter = new HelpFormatter();
-        formatter.setWidth(100);
+        formatter.setWidth(90);
 
         Option help = new Option(null, "help", false, "print this message");
         options.addOption(help);
@@ -91,7 +91,8 @@ public class App {
         options.addOption(veryVerbose);
         Option outLocation = new Option(
             "o", "out-location", true, "specify output location (default for single" +
-            " tables: <datetime><table>.sql, default for all tables: ./out)"
+            " tables: '<datetime><table>.sql', default for all tables: " +
+            "'<datetime> jfiredump')"
         );
         options.addOption(outLocation);
         Option encoding = new Option(
