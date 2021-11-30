@@ -11,6 +11,10 @@ Changelog
   the individual files end up in different folders. This made
   development/testing a little bit easier for me.
 
+### Fixed
+
+- Typo 'jfirebird' -> 'jfiredump' in file headers
+
 `0.0.3` - _2021-11-29_
 ----------------------------------------------------------------------
 
