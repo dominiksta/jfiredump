@@ -1,6 +1,16 @@
 Changelog
 ======================================================================
 
+`0.0.4` - _unreleased_
+----------------------------------------------------------------------
+
+### Changed
+
+- The output folder when exporting all tables was changed to include to the
+  current date and time. This way, when exporting all tables multimple times,
+  the individual files end up in different folders. This made
+  development/testing a little bit easier for me.
+
 `0.0.3` - _2021-11-29_
 ----------------------------------------------------------------------
 

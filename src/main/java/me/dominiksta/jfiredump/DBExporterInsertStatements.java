@@ -301,7 +301,7 @@ public class DBExporterInsertStatements extends DBExporter {
      */
     @Override
     public void exportAllTables(String directoryName) {
-        if (directoryName == null) directoryName = "." + Util.sep + "out";
+        if (directoryName == null) directoryName = DBExporter.defaultFolderName();
 
         File dir = new File(directoryName);
         if (dir.mkdirs()) {
@@ -315,8 +315,7 @@ public class DBExporterInsertStatements extends DBExporter {
         ResultSet rs = this.con.listTables();
         try {
             while (rs.next()) {
-                String fileName = directoryName + Util.sep +
-                    DBExporter.defaultFileName(rs.getString(3));
+                String fileName = directoryName + Util.sep + rs.getString(3) + ".sql";
                 this.exportTable(rs.getString(3), fileName);
             }
         } catch(SQLException e) {

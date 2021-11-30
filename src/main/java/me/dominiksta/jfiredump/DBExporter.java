@@ -64,6 +64,13 @@ public abstract class DBExporter {
         );
     }
 
+    /** Return a default folder name for exporting a collection of tables */
+    protected static String defaultFolderName() {
+        return String.format("%s jfiredump",
+            new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date())
+        );
+    }
+
     public String getNewline() {
         return nl;
     }

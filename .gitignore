@@ -3,5 +3,5 @@
 /bin/
 /.classpath
 /.project
-/out
+* jfiredump/
 /*.sql
