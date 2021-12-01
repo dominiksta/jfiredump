@@ -60,7 +60,7 @@ arguments should be mostly self-explanatory and can be shown by running
 
 ```
 $ java -jar jfiredump-VERSION.jar --help
-usage: jfiredump [<OPTIONS>] {<TABLE>|!!all!!} <FILE>
+usage: jfiredump [<OPTIONS>] <FILE> {<TABLE>|!!all!!}
 Available options:
  -e,--encoding <arg>       specify database encoding (firebird encoding names, see
                            https://github.com/FirebirdSQL/jaybird/wiki/Character-encodings
@@ -73,10 +73,14 @@ Available options:
                            jfiredump')
  -p,--password <arg>       specify database password (default: masterkey)
     --port <arg>           specify database port (default: 3050)
+ -r,--run-file <arg>       run an existing .sql-File (only allows INSERT statements). When
+                           using this option, the positional <TABLE> argument is ignored.
+                           Will only commit when all statements were processed without
+                           errors.
  -u,--user <arg>           specify database user (default: SYSDBA)
  -v,--verbose              verbose logging output for debugging
  -vv,--very-verbose        very verbose logging output for debugging
-```
+ ```
 
 ## Examples
 
@@ -84,13 +88,19 @@ Available options:
 
 ```
 $ java -jar jfiredump-VERSION.jar --line-endings CRLF --encoding WIN1252 \
-  -p myPassword --port 3055 !!all!! MY_DB.GDB
+  -p myPassword --port 3055 MY_DB.GDB !!all!!
 ```
 
 ### Exporting one table in a database
 
 ```
-$ java -jar jfiredump-VERSION.jar --out-location table.sql MY_TABLE MY_DB.GDB
+$ java -jar jfiredump-VERSION.jar --out-location table.sql MY_DB.GDB MY_TABLE 
+```
+
+### Running an existing dump file
+
+```
+$ java -jar jfiredump-VERSION.jar --run-file table.sql MY_DB.GDB
 ```
 
 # Development
