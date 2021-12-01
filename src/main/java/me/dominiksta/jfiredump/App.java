@@ -26,7 +26,7 @@ public class App {
      * This will be displayed when the cli arguments are invalid or --help is
      * provided
      */
-    static final String USAGE_TEXT = "jfiredump [<OPTIONS>] {<TABLE>|!!all!!} <FILE>" +
+    static final String USAGE_TEXT = "jfiredump [<OPTIONS>] <FILE> {<TABLE>|!!all!!}" +
         System.lineSeparator() + "Available options:";
 
     /** Global logging setup */
@@ -100,6 +100,13 @@ public class App {
             " names, see https://github.com/FirebirdSQL/jaybird/wiki/Character-encodings)"
         );
         options.addOption(encoding);
+        Option runFile = new Option(
+            "r", "run-file", true, "run an existing .sql-File (only allows INSERT" +
+            " statements). When using this option, the positional <TABLE> argument is" +
+            " ignored. Will only commit when all statements were processed without" +
+            " errors."
+        );
+        options.addOption(runFile);
         Option lineEndings = new Option("l", "line-endings", true, "either LF or CRLF");
         options.addOption(lineEndings);
 
@@ -113,11 +120,10 @@ public class App {
                 formatter.printHelp(USAGE_TEXT, options);
                 System.exit(0);
             }
-            // check positional file option
-            if (line.getArgs().length < 2) {
-                System.err.println("Missing positional argument [file]");
-                if (line.getArgs().length < 1)
-                    System.err.println("Missing positional argument [table]");
+            // check positional options
+            if ((line.getArgs().length < 2 && line.getOptionValue(runFile) == null)
+                || line.getArgs().length < 1) {
+                System.err.println("Missing positional argument");
                 formatter.printHelp(USAGE_TEXT, options);
                 System.exit(1);
             }
@@ -146,41 +152,50 @@ public class App {
             }
 
             // ----------------------------------------------------------------------
-            // start exporter based on cli arguments
+            // run program based on cli arguments
             // ----------------------------------------------------------------------
 
             DBConnection con = new DBConnection(
                 line.getOptionValue(host, "localhost"),
                 Integer.parseInt(line.getOptionValue(port, "3050")),
-                line.getArgs()[1],
+                line.getArgs()[0],
                 line.getOptionValue(user, "SYSDBA"),
                 line.getOptionValue(password, "masterkey"),
                 line.getOptionValue(encoding)
             );
 
-            DBExporterInsertStatements exporter = new DBExporterInsertStatements(con);
-            switch(line.getOptionValue(lineEndings, "auto")) {
-                case "LF":
-                    exporter.setNewline("\n");
-                    break;
-                case "CRLF":
-                    exporter.setNewline("\r\n");
-                    break;
-                case "auto":
-                    // leave default
-                    break;
-                default:
-                    String msg = "Invalid specified line endings: " +
-                        line.getOptionValue(lineEndings);
-                    App.logger.severe(msg);
-                    throw new RuntimeException(msg);
-            }
-            if (line.getArgs()[0].equals("!!all!!")) {
-                exporter.exportAllTables(line.getOptionValue(outLocation));
+            if (line.getOptionValue(runFile) == null) {
+                // export to file
+                // ------------------------------------------------------------
+                DBExporterInsertStatements exporter =
+                    new DBExporterInsertStatements(con);
+                switch(line.getOptionValue(lineEndings, "auto")) {
+                    case "LF":
+                        exporter.setNewline("\n");
+                        break;
+                    case "CRLF":
+                        exporter.setNewline("\r\n");
+                        break;
+                    case "auto":
+                        // leave default
+                        break;
+                    default:
+                        String msg = "Invalid specified line endings: " +
+                            line.getOptionValue(lineEndings);
+                        App.logger.severe(msg);
+                        throw new RuntimeException(msg);
+                }
+                if (line.getArgs()[1].equals("!!all!!")) {
+                    exporter.exportAllTables(line.getOptionValue(outLocation));
+                } else {
+                    exporter.exportTable(
+                        line.getArgs()[1], line.getOptionValue(outLocation)
+                    );
+                }
             } else {
-                exporter.exportTable(
-                    line.getArgs()[0], line.getOptionValue(outLocation)
-                );
+                // run existing file
+                // ------------------------------------------------------------
+                con.runFile(line.getOptionValue(runFile));
             }
 
 

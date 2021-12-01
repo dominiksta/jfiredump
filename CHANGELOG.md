@@ -6,11 +6,18 @@ Changelog
 
 ### Added
 
+- New `--run-file` command line argument to execute an exsiting sql file. Only
+  INSERT statements are allowed since this is intended to be used to restore
+  dumps.
 - Source database (host, port, path) added to the header information of exported
   files.
 
 ### Changed
 
+- The **order of the positional command line arguments** has changed! The "file"
+  argument now comes before the "table" argument. This is done because the new
+  option `--run-file` (used to restore from a dump) will simply use the existing
+  "file" argument and ignore the "table" argument.
 - The output folder when exporting all tables was changed to include to the
   current date and time. This way, when exporting all tables multimple times,
   the individual files end up in different folders. This made

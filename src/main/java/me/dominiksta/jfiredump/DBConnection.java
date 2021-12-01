@@ -1,5 +1,9 @@
 package me.dominiksta.jfiredump;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -7,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * A wrapper for some JDBC functionality to make connecting to the firebird
@@ -49,6 +55,7 @@ public class DBConnection {
 
             this.con = DriverManager.getConnection(fullConnectionString, props);
             App.logger.info("Connection successful");
+            this.con.setAutoCommit(false);
             this.stmt = this.con.createStatement();
 
             // detect version
@@ -85,6 +92,43 @@ public class DBConnection {
             App.logger.severe("Fatal SQL Error!");
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /** Run the .sql-File `filePath` */
+    public void runFile(String filePath) {
+        App.logger.fine("Running file: " + filePath);
+        if (!filePath.toLowerCase().endsWith(".sql"))
+            App.logger.warning("Trying to run non-.sql file: " + filePath);
+
+        try(Scanner scan = new Scanner(new InputStreamReader(
+                    new FileInputStream(filePath), "UTF-8"))) {
+            // command delimiter is either a semicolon or two newlines
+            scan.useDelimiter(Pattern.compile(";(\n|\r\n)INSERT"));
+
+            int statementsProcessed = 0;
+
+            while (scan.hasNext()) {
+                String statement = scan.next().trim();
+
+                // ignore comments
+                if (statement.startsWith("--")) continue;
+
+                statement = "INSERT " + statement;
+
+                App.logger.finest("Running SQL: " + statement);
+                this.stmt.executeUpdate(statement);
+                statementsProcessed++;
+                if (statementsProcessed % 1000 == 0)
+                    App.logger.info("Statements processed: " + statementsProcessed);
+            }
+
+            this.con.commit();
+            App.logger.info("Done running file " + filePath);
+        } catch(FileNotFoundException | SQLException | UnsupportedEncodingException e) {
+            App.logger.severe("Could not run file " + filePath);
+            e.printStackTrace();
+            System.exit(1);
         }
     }
 
