@@ -17,15 +17,17 @@ public class DBConnection {
     private Connection con;
     private Statement stmt;
     private Properties props;
+    private String shortConnectionString;
 
     /** Connect to a firebird database as specified by the arguments */
     public DBConnection(
         String host, int port, String path, String user, String password,
         String encoding
     ) {
-        String connectionString = "jdbc:firebirdsql:" + host + "/" + port + ":" + path;
+        this.shortConnectionString = host + "/" + port + ":" + path;
+        String fullConnectionString = "jdbc:firebirdsql:" + this.shortConnectionString;
         App.logger.info(
-            "Connecting to " + connectionString + " with user " + user
+            "Connecting to " + fullConnectionString + " with user " + user
         );
         // load firebird driver
         // ----------------------------------------------------------------------
@@ -45,7 +47,7 @@ public class DBConnection {
             // see https://github.com/FirebirdSQL/jaybird/wiki/Character-encodings
             if (encoding != null) props.setProperty("encoding", encoding);
 
-            this.con = DriverManager.getConnection(connectionString, props);
+            this.con = DriverManager.getConnection(fullConnectionString, props);
             App.logger.info("Connection successful");
             this.stmt = this.con.createStatement();
 
@@ -84,6 +86,10 @@ public class DBConnection {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public String getShortConnectionString() {
+        return this.shortConnectionString;
     }
 
     /** List all (non-system) tables in the database. */

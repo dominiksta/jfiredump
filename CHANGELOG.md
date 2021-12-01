@@ -4,6 +4,11 @@ Changelog
 `0.0.4` - _unreleased_
 ----------------------------------------------------------------------
 
+### Added
+
+- Source database (host, port, path) added to the header information of exported
+  files.
+
 ### Changed
 
 - The output folder when exporting all tables was changed to include to the

@@ -256,6 +256,7 @@ public class DBExporterInsertStatements extends DBExporter {
                 "See https://github.com/dominiksta/jfiredump" + this.nl +
                 "-- Date: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                 .format(new Date()) + this.nl +
+                "-- Source DB: " + this.con.getShortConnectionString() + this.nl +
                 "-- Exported query: " + query + this.nl +
                 "-- Target table: " + targetTable + this.nl +
                 "-- Note that this file is made for Firebird 2.x with dialect 3 " +
