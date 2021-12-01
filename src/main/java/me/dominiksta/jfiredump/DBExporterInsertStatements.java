@@ -262,7 +262,7 @@ public class DBExporterInsertStatements extends DBExporter {
                 "-- Note that this file is made for Firebird 2.x with dialect 3 " +
                 "- other database " + this.nl +
                 "-- technologies may or may not accept this file" + this.nl +
-                "-- SET SQL_DIALECT 3;" + this.nl
+                "-- SET SQL DIALECT 3;" + this.nl
             );
             for (int i = 0; i < length; i++) {
                 String values = "";

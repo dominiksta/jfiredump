@@ -19,6 +19,7 @@ Changelog
 ### Fixed
 
 - Typo 'jfirebird' -> 'jfiredump' in file headers
+- Typo 'SQL_DIALECT' -> 'SQL DIALECT' in file headers
 
 `0.0.3` - _2021-11-29_
 ----------------------------------------------------------------------
