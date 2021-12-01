@@ -6,6 +6,13 @@
 A (very) small utility to dump a Firebird database to a file of SQL INSERT
 statements.
 
+DISCLAIMER: /Please do not rely on this tool for backups!/ It is not well tested
+enough to be used in that role. The reason this tool was written was because I
+wanted to make the transition away from firebird easier (fb is a fine database,
+but it lacks support from many modern programming languages that some of us have
+to use). As such, dumps taken with this tool should be verified through some
+other means when used in production.
+
 ## Alternatives
 
 ### FBExport
