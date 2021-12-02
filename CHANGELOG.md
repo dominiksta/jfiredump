@@ -22,6 +22,8 @@ Changelog
   current date and time. This way, when exporting all tables multimple times,
   the individual files end up in different folders. This made
   development/testing a little bit easier for me.
+- Binary data set to `NULL` is now exported as `NULL`. Binary data will only be
+  set to `'[BINARY_DATA_LOST_IN_EXPORT]` when it is not `NULL`.
 
 ### Fixed
 

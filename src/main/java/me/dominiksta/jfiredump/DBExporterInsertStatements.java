@@ -180,6 +180,13 @@ public class DBExporterInsertStatements extends DBExporter {
                         case Types.BLOB:
                         case Types.CLOB:
                         case Types.OTHER:
+                            if (value == null) {
+                                col.b.add("NULL");
+                                // only binaries that are not set to null are
+                                // not supported, so don't need to display a
+                                // waring here
+                                break;
+                            }
                             if (typesAlreadWarned.indexOf(col.a) == -1) {
                                 App.logger.warning(
                                     "Unsupported type: " + this.jdbcTypeToString.get(col.a)
