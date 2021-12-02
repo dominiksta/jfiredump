@@ -25,6 +25,8 @@ Changelog
 
 ### Fixed
 
+- Milliseconds in time types were incorrectly zero-padded, resulting in a slight
+  decrease in the value
 - Typo 'jfirebird' -> 'jfiredump' in file headers
 - Typo 'SQL_DIALECT' -> 'SQL DIALECT' in file headers
 

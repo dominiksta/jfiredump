@@ -156,7 +156,7 @@ public class DBExporterInsertStatements extends DBExporter {
                                 c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH)
                             );
                             String time = String.format(
-                                "%02d:%02d:%02d.%04d", c.get(Calendar.HOUR_OF_DAY),
+                                "%02d:%02d:%02d.%03d", c.get(Calendar.HOUR_OF_DAY),
                                 c.get(Calendar.MINUTE), c.get(Calendar.SECOND),
                                 c.get(Calendar.MILLISECOND)
                             );
